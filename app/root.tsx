@@ -21,6 +21,7 @@ import {
   RainbowKitAuthenticationProvider,
 } from "@rainbow-me/rainbowkit";
 import { getSession } from "~/session.server";
+import { localesByShortForm } from "./translations.server";
 import { useSignInWithEthereum } from "./hooks/useSignInWithEthereum";
 import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
@@ -30,13 +31,18 @@ import {
   NonFlashOfWrongThemeEls,
   type Theme,
 } from "./theme-provider";
+import type { Language } from "./translations.server";
 
 import rainbowStylesUrl from "@rainbow-me/rainbowkit/styles.css";
 import stylesheet from "~/tailwind.css";
 
 type Env = { WALLET_CONNECT_PROJECT_ID: string };
 
-type LoaderData = { ENV: Env; serverSideTheme: Theme | null };
+type LoaderData = {
+  ENV: Env;
+  language: Language;
+  serverSideTheme: Theme | null;
+};
 
 export const meta: MetaFunction = () => {
   return [
@@ -53,11 +59,12 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const themeSession = await getSession(request);
-
-  const data: LoaderData = {
+  const session = await getSession(request);
+  const language = session.getLang();
+  const data = {
     ENV: { WALLET_CONNECT_PROJECT_ID: process.env.WALLET_CONNECT_PROJECT_ID! },
-    serverSideTheme: themeSession.getTheme(),
+    serverSideTheme: session.getTheme(),
+    language,
   };
 
   return json(data);
@@ -65,8 +72,9 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 function App() {
   const [theme] = useTheme();
-  const { ENV, serverSideTheme } = useLoaderData<LoaderData>();
+  const { ENV, serverSideTheme, language } = useLoaderData<LoaderData>();
   const { state, dispatch, authenticationAdapter } = useSignInWithEthereum();
+  const shortFormLocale = localesByShortForm[language];
 
   const [{ config, chains }] = useState(() => {
     const { chains, publicClient } = configureChains(
@@ -107,6 +115,7 @@ function App() {
                 coolMode
                 chains={chains}
                 modalSize="compact"
+                locale={shortFormLocale}
                 theme={
                   theme === "light"
                     ? lightTheme({

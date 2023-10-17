@@ -1,6 +1,15 @@
+import type { Locale } from "@rainbow-me/rainbowkit";
+
 export type Language = "en" | "es" | "fr" | "ko";
 
 export const languages = ["en", "es", "fr", "ko"] as const;
+
+export const localesByShortForm: Record<string, Locale> = {
+  en: "en-US",
+  ko: "ko-KR",
+  es: "es-419",
+  fr: "fr-FR",
+};
 
 export function validateLanguage(language: any): language is Language {
   return languages.includes(language);
