@@ -21,22 +21,30 @@ import {
   RainbowKitAuthenticationProvider,
 } from "@rainbow-me/rainbowkit";
 import { getSession } from "~/session.server";
+import { localesByShortForm } from "./translations.server";
 import { useSignInWithEthereum } from "./hooks/useSignInWithEthereum";
-import type { LinksFunction, LoaderFunction } from "@remix-run/node";
-import type { MetaFunction } from "@remix-run/react";
 import {
   useTheme,
   ThemeProvider,
   NonFlashOfWrongThemeEls,
-  type Theme,
 } from "./theme-provider";
+import type { LinksFunction, LoaderFunction } from "@remix-run/node";
+import type { Locale } from "@rainbow-me/rainbowkit";
+import type { MetaFunction } from "@remix-run/react";
+import type { Language } from "./translations.server";
+import type { Theme } from "./theme-provider";
 
 import rainbowStylesUrl from "@rainbow-me/rainbowkit/styles.css";
 import stylesheet from "~/tailwind.css";
 
 type Env = { WALLET_CONNECT_PROJECT_ID: string };
 
-type LoaderData = { ENV: Env; serverSideTheme: Theme | null };
+type LoaderData = {
+  ENV: Env;
+  language: Language;
+  serverSideTheme: Theme | null;
+  languageLocale: Locale;
+};
 
 export const meta: MetaFunction = () => {
   return [
@@ -53,11 +61,13 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const themeSession = await getSession(request);
-
-  const data: LoaderData = {
+  const session = await getSession(request);
+  const language = session.getLang();
+  const data = {
     ENV: { WALLET_CONNECT_PROJECT_ID: process.env.WALLET_CONNECT_PROJECT_ID! },
-    serverSideTheme: themeSession.getTheme(),
+    serverSideTheme: session.getTheme(),
+    language,
+    languageLocale: localesByShortForm[language],
   };
 
   return json(data);
@@ -65,7 +75,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 function App() {
   const [theme] = useTheme();
-  const { ENV, serverSideTheme } = useLoaderData<LoaderData>();
+  const { ENV, serverSideTheme, languageLocale } = useLoaderData<LoaderData>();
   const { state, dispatch, authenticationAdapter } = useSignInWithEthereum();
 
   const [{ config, chains }] = useState(() => {
@@ -107,6 +117,7 @@ function App() {
                 coolMode
                 chains={chains}
                 modalSize="compact"
+                locale={languageLocale}
                 theme={
                   theme === "light"
                     ? lightTheme({
