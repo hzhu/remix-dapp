@@ -9,26 +9,26 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@rainbow-me/rainbowkit": "^1.0.11",
-    "@remix-run/node": "^2.0.1",
-    "@remix-run/react": "^2.0.1",
-    "@remix-run/serve": "^2.0.1",
-    "@vercel/remix": "^2.0.1",
+    "@rainbow-me/rainbowkit": "^1.2.0",
+    "@remix-run/node": "^2.2.0",
+    "@remix-run/react": "^2.2.0",
+    "@remix-run/serve": "^2.2.0",
+    "@vercel/remix": "^2.2.0",
     "clsx": "^2.0.0",
     "isbot": "^3.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "siwe": "^2.1.4",
-    "viem": "^1.15.1",
+    "viem": "^1.18.2",
     "wagmi": "^1.4.3"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.0.1",
-    "@remix-run/eslint-config": "^2.0.1",
-    "@types/react": "^18.2.24",
-    "@types/react-dom": "^18.2.7",
-    "eslint": "^8.50.0",
-    "tailwindcss": "^3.3.3",
+    "@remix-run/dev": "^2.2.0",
+    "@remix-run/eslint-config": "^2.2.0",
+    "@types/react": "^18.2.33",
+    "@types/react-dom": "^18.2.14",
+    "eslint": "^8.52.0",
+    "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2"
   },
   "engines": {
